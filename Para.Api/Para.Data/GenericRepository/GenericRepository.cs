@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Para.Base.Entity;
 using Para.Data.Context;
+using System.Linq.Expressions;
 
 namespace Para.Data.GenericRepository;
 
@@ -49,6 +50,23 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 
     public async Task<List<TEntity>> GetAll()
     {
-       return await dbContext.Set<TEntity>().ToListAsync();
+        return await dbContext.Set<TEntity>().ToListAsync();
+    }
+
+    public async Task<List<TEntity>> Where(Expression<Func<TEntity, bool>> predicate)
+    {
+        return await dbContext.Set<TEntity>().Where(predicate).ToListAsync();
+    }
+
+    public IQueryable<TEntity> Include(params Expression<Func<TEntity, object>>[] includes)
+    {
+        IQueryable<TEntity> queryable = dbContext.Set<TEntity>();
+
+        foreach (var include in includes)
+        {
+            queryable = queryable.Include(include);
+        }
+
+        return queryable;
     }
 }
