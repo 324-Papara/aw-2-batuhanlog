@@ -34,10 +34,12 @@ namespace Para.Api
             });
 
             var connectionStringSql = Configuration.GetConnectionString("MsSqlConnection");
-            services.AddDbContext<ParaSqlDbContext>(options => options.UseSqlServer(connectionStringSql));
+            services.AddDbContext<ParaSqlDbContext>(options =>
+                options.UseSqlServer(connectionStringSql, b => b.MigrationsAssembly("Para.Api")));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
+
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
